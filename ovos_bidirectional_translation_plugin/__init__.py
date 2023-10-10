@@ -33,7 +33,6 @@ class UtteranceTranslator(UtteranceTransformer):
             sess = SessionManager.get()
 
         utt = utterances[0]
-        lang = sess.lang
         context["translation_mode"] = self.mode.value
         context["was_translated"] = False
 
@@ -44,26 +43,27 @@ class UtteranceTranslator(UtteranceTransformer):
         if self.verify_lang:
             detected_lang = self.lang_detector.detect(utt)
             context["detected_lang"] = detected_lang
-            if lang != detected_lang:
-                LOG.warning(f"Specified lang: {lang} but detected {detected_lang}")
+            if sess.lang != detected_lang:
+                LOG.warning(f"Specified lang: {sess.lang} but detected {detected_lang}")
                 if self.ignore_invalid and detected_lang not in self.valid_langs:
                     LOG.error(f"ignoring lang detection, {detected_lang} "
-                              f"not in valid languages: {sess.valid_languages}")
+                              f"not in valid languages: {self.valid_langs}")
                 else:
-                    lang = detected_lang
+                    sess.lang = detected_lang
 
         # check if lang is unsupported
-        if lang not in self.valid_langs:
+        if sess.lang not in self.valid_langs:
             # translate langs we know OVOS can't handle to a supported lang
-            sess.lang = self.internal_lang
-            utt = self.translator.translate(utt, self.internal_lang, lang)
+            utt = self.translator.translate(utt, self.internal_lang, sess.lang)
             LOG.info(f"translated utterance: {utt}")
             context["was_translated"] = True
 
             # signal DialogTransformer to translate everything back to the input language
             if self.bidirectional:
-                context["output_lang"] = lang
+                context["output_lang"] = sess.lang
                 context["translate_dialogs"] = True  # consumed in DialogTransformer
+
+            sess.lang = self.internal_lang
 
         context["session"] = sess.serialize()  # update session
 
@@ -88,6 +88,7 @@ class DialogTranslator(UtteranceTransformer):
             lang = context.get("output_lang") or Configuration().get("lang", "en-us")
             utt = self.translator.translate(dialog, lang, sess.lang)
             sess.lang = lang
+            context["was_translated"] = True
             context["session"] = sess.serialize()  # update session
 
         # return translated utterances + data
