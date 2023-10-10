@@ -33,7 +33,6 @@ class UtteranceTranslator(UtteranceTransformer):
             sess = SessionManager.get()
 
         utt = utterances[0]
-        context["translation_mode"] = self.mode.value
         context["was_translated"] = False
 
         tx = False
