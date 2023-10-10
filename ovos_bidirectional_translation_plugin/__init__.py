@@ -35,8 +35,6 @@ class UtteranceTranslator(UtteranceTransformer):
         utt = utterances[0]
         context["was_translated"] = False
 
-        tx = False
-
         # check for language mismatch (default / detected)
         # - handle use case of a chat platform where users can write in any language
         if self.verify_lang:
