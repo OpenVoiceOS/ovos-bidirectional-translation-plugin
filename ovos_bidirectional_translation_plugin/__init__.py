@@ -15,7 +15,7 @@ class UtteranceTranslator(UtteranceTransformer):
 
         self.bidirectional = self.config.get("bidirectional", True)
         self.verify_lang = self.config.get("verify_lang", False)
-        self.ignore_invalid = self.config.get("ignore_invalid_langs", True)
+        self.ignore_invalid = self.config.get("ignore_invalid_langs", False)
 
     @property
     def internal_lang(self):
