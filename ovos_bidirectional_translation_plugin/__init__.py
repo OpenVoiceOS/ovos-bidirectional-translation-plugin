@@ -68,11 +68,22 @@ class UtteranceTranslator(UtteranceTransformer):
         return utterances, context
 
 
-class DialogTranslator(UtteranceTransformer):
+class DialogTranslator(DialogTransformer):
 
     def __init__(self, name="ovos-dialog-translation-plugin", priority=5, config=None):
         super().__init__(name, priority, config)
         self.translator = OVOSLangTranslationFactory.create()
+        self.output_langs = {}
+
+    def bind(self, bus=None):
+        super().bind(bus)
+        self.bus.on("ovos.language.force_output", self.handle_output_lang)
+
+    def handle_output_lang(self, message):
+        """ intent to force output in a certain language"""
+        sess = SessionManager.get(message)
+        new_lang = message.data["lang"]
+        self.output_langs[sess.session_id] = new_lang
 
     def transform(self, dialog: str, context: dict=None):
         context = context or {}
@@ -80,6 +91,10 @@ class DialogTranslator(UtteranceTransformer):
             sess = Session.deserialize(context["session"])
         else:
             sess = SessionManager.get()
+
+        if sess.session_id in self.output_langs: # override for session
+            context["translate_dialogs"] = True
+            context["output_lang"] = self.output_langs[sess.session_id]
 
         if context.get("translate_dialogs"):
             lang = context.get("output_lang") or Configuration().get("lang", "en-us")
