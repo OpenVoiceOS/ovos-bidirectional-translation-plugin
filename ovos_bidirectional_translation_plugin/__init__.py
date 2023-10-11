@@ -77,13 +77,20 @@ class DialogTranslator(DialogTransformer):
 
     def bind(self, bus=None):
         super().bind(bus)
-        self.bus.on("ovos.language.force_output", self.handle_output_lang)
+        self.bus.on("ovos.language.output.force", self.handle_output_lang)
+        self.bus.on("ovos.language.output.reset", self.handle_reset_output_lang)
 
     def handle_output_lang(self, message):
         """ intent to force output in a certain language"""
         sess = SessionManager.get(message)
         new_lang = message.data["lang"]
         self.output_langs[sess.session_id] = new_lang
+
+    def handle_reset_output_lang(self, message):
+        """ disable forced output """
+        sess = SessionManager.get(message)
+        if sess.session_id in self.output_langs:
+            self.output_langs.pop(sess.session_id)
 
     def transform(self, dialog: str, context: dict=None):
         context = context or {}
@@ -98,10 +105,11 @@ class DialogTranslator(DialogTransformer):
 
         if context.get("translate_dialogs"):
             lang = context.get("output_lang") or Configuration().get("lang", "en-us")
-            utt = self.translator.translate(dialog, lang, sess.lang)
-            sess.lang = lang
-            context["was_translated"] = True
-            context["session"] = sess.serialize()  # update session
+            if lang != sess.lang:
+                utt = self.translator.translate(dialog, lang, sess.lang)
+                sess.lang = lang
+                context["was_translated"] = True
+                context["session"] = sess.serialize()  # update session
 
         # return translated utterances + data
         return utterances, context
