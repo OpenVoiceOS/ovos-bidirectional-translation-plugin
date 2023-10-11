@@ -16,6 +16,7 @@ class UtteranceTranslator(UtteranceTransformer):
         self.bidirectional = self.config.get("bidirectional", True)
         self.verify_lang = self.config.get("verify_lang", False)
         self.ignore_invalid = self.config.get("ignore_invalid_langs", False)
+        self.translate_secondary = self.config.get("translate_secondary_langs", False)
 
     @property
     def internal_lang(self):
@@ -23,6 +24,8 @@ class UtteranceTranslator(UtteranceTransformer):
 
     @property
     def valid_langs(self):
+        if self.translate_secondary:
+            return [self.internal_lang]
         return list(set([self.internal_lang] + Configuration().get("secondary_langs", [])))
 
     def transform(self, utterances, context=None):

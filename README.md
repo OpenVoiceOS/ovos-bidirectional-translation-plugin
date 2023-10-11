@@ -73,7 +73,8 @@ Recommend plugins:
     "ovos-utterance-translation-plugin": {
       "bidirectional": true,
       "verify_lang": false,
-      "ignore_invalid": true
+      "ignore_invalid": true,
+      "translate_secondary_langs": false
     }
 },
 "dialog_transformers": {
