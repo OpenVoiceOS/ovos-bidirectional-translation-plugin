@@ -2,6 +2,8 @@
 
 This package includes a UtteranceTransformer plugin and a DialogTransformer plugin, they work together to allow OVOS to speak in ANY language
 
+> This plugin is still in **alpha**
+
 ## Lang support
 
 Refreshser on OVOS language support system
