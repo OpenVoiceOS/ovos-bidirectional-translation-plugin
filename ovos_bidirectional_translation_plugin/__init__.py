@@ -109,10 +109,10 @@ class DialogTranslator(DialogTransformer):
         if context.get("translate_dialogs"):
             lang = context.get("output_lang") or Configuration().get("lang", "en-us")
             if lang != sess.lang:
-                utt = self.translator.translate(dialog, lang, sess.lang)
+                dialog = self.translator.translate(dialog, lang, sess.lang)
                 sess.lang = lang
                 context["was_translated"] = True
                 context["session"] = sess.serialize()  # update session
 
-        # return translated utterances + data
-        return utterances, context
+        # return translated dialog + data
+        return dialog, context
