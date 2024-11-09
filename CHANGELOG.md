@@ -1,12 +1,16 @@
 # Changelog
 
-## [0.1.0a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.0a1) (2024-09-10)
+## [0.1.1a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.1a1) (2024-11-09)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/61d40ef69233d2869003dceb7fae43ad4adddf4a...0.1.0a1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.0...0.1.1a1)
+
+**Fixed bugs:**
+
+- NameError: name 'utterances' is not defined [\#3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/issues/3)
 
 **Merged pull requests:**
 
-- feat\(docs\): [\#1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/1) ([JarbasAl](https://github.com/JarbasAl))
+- chore: typing and docstrs [\#4](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/4) ([JarbasAl](https://github.com/JarbasAl))
 
 
 
