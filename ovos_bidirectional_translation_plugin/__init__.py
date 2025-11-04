@@ -78,6 +78,9 @@ class UtteranceTranslator(UtteranceTransformer):
             # Translate the utterance to the internal language
             utt = self.translator.translate(utt, self.internal_lang, sess.lang)
             LOG.info(f"Translated utterance: {utt}")
+
+            # this only solves the issue for the first utterance in the list, but better than it not working at all
+            utterances = [utt] + utterances[1:] if len(utterances) > 1 else [utt]
             context["was_translated"] = True
 
             # signal DialogTransformer to translate everything back to the input language
