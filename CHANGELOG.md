@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3a3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a3) (2025-12-19)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a2...0.1.3a3)
+
+**Merged pull requests:**
+
+- chore\(deps\): update dependency python to 3.14 [\#10](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/10) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [0.1.3a2](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a2) (2025-12-19)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a1...0.1.3a2)
