@@ -1,0 +1,5 @@
+[neon.plugin.text]
+ovos-utterance-translation-plugin = ovos_bidirectional_translation_plugin:UtteranceTranslator
+
+[opm.transformer.dialog]
+ovos-dialog-translation-plugin = ovos_bidirectional_translation_plugin:DialogTranslator

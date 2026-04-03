@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: ovos-bidirectional-translation-plugin
+Version: 0.1.3a3
+Summary: Bidirectional translation plugin to make OVOS understand any language
+Home-page: https://github.com/OpenVoiceOS/ovos_bidirectional_translation_plugin
+Author: jarbasAi
+Author-email: jarbasai@mailfence.com
+Keywords: OVOS plugin utterance transformer
+License-File: LICENSE
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: license-file
+Dynamic: summary

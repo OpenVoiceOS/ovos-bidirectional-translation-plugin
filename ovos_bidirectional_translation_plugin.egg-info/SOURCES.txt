@@ -1,0 +1,11 @@
+LICENSE
+README.md
+setup.py
+ovos_bidirectional_translation_plugin/__init__.py
+ovos_bidirectional_translation_plugin/version.py
+ovos_bidirectional_translation_plugin.egg-info/PKG-INFO
+ovos_bidirectional_translation_plugin.egg-info/SOURCES.txt
+ovos_bidirectional_translation_plugin.egg-info/dependency_links.txt
+ovos_bidirectional_translation_plugin.egg-info/entry_points.txt
+ovos_bidirectional_translation_plugin.egg-info/top_level.txt
+ovos_bidirectional_translation_plugin.egg-info/zip-safe
