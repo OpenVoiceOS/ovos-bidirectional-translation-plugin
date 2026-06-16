@@ -13,7 +13,7 @@ authors = [
 ]
 keywords = ["OVOS", "plugin", "utterance", "transformer"]
 dependencies = [
-    "ovos-plugin-manager>=2.4.0a1,<3.0.0",
+    "ovos-plugin-manager>=2.1.0,<3.0.0",
     "ovos-utils>=0.0.38,<1.0.0",
     "ovos-bus-client>=0.0.8,<3.0.0",
     "ovos-config>=0.0.12",
