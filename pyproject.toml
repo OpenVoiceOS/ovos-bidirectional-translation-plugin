@@ -16,7 +16,7 @@ keywords = ["OVOS", "plugin", "utterance", "transformer"]
 [project.urls]
 Homepage = "https://github.com/OpenVoiceOS/ovos_bidirectional_translation_plugin"
 
-[project.entry-points."neon.plugin.text"]
+[project.entry-points."opm.transformer.text"]
 ovos-utterance-translation-plugin = "ovos_bidirectional_translation_plugin:UtteranceTranslator"
 
 [project.entry-points."opm.transformer.dialog"]
