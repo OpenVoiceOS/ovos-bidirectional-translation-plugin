@@ -12,6 +12,12 @@ authors = [
     {name = "jarbasAi", email = "jarbasai@mailfence.com"}
 ]
 keywords = ["OVOS", "plugin", "utterance", "transformer"]
+dependencies = [
+    "ovos-plugin-manager>=2.4.0a1",
+    "ovos-utils>=0.0.38",
+    "ovos-bus-client>=0.0.8",
+    "ovos-config>=0.0.12",
+]
 
 [project.urls]
 Homepage = "https://github.com/OpenVoiceOS/ovos_bidirectional_translation_plugin"
