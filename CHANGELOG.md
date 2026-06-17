@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3a4](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a4) (2026-06-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a3...0.1.3a4)
+
+**Merged pull requests:**
+
+- chore: add missing shared CI workflows [\#16](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/16) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.3a3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a3) (2025-12-19)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a2...0.1.3a3)
