@@ -1,26 +1,28 @@
-# OVOS Bidirectional Translation plugin
+# OVOS Bidirectional Translation Plugin
 
-This package includes a UtteranceTransformer plugin and a DialogTransformer plugin, they work together to allow OVOS to speak in ANY language
+This package holds two OVOS plugins: a `UtteranceTransformer` and a `DialogTransformer`. Together they let OVOS understand and answer in any language, even one the installed skills do not support directly.
 
-> This plugin is still in **alpha**
+> This plugin is still in **alpha**.
 
-## Lang support
+## Install
 
-Refreshser on OVOS language support system
+```console
+pip install ovos-bidirectional-translation-plugin
+```
 
-- a default language is defined in mycroft.conf, this is the OVOS primary language
-  - all skills, TTS, and STT plugins MUST support this language
-- extra languages are defined in mycroft.conf, OVOs can also speak these languages
-  - STT and TTS plugins in use MUST support all these languages
-  - if installed skills do not support these languages they will be ignored when language is in use
-  - support can be per intent (partially translated skills supported)
-- skills register intents for all the above languages, this list represents the languages OVOS can speak
-- each utterance has an assigned language via Session (message.context)
-  - default lang used if missing
-  - defined in wake word
-  - detected in speech (WIP - functional plugins exist)
-  - default lang from user recognition (idea)
-  - defined in client application being used (eg, sent from hivemind satellites)
+## Language support in OVOS
+
+This section is a refresher on how OVOS handles language.
+
+- A default language is set in `mycroft.conf`. This is the OVOS primary language. All skills, TTS plugins, and STT plugins must support it.
+- Extra languages can also be set in `mycroft.conf`. STT and TTS plugins in use must support these languages too. If an installed skill does not support one of them, OVOS ignores that skill for that language. Support can also be partial, per intent.
+- Skills register intents for each supported language. Together these intents define the languages OVOS can speak.
+- Each utterance carries an assigned language, through the session (`message.context`). OVOS picks this language from, in order of preference:
+  - the default language, if nothing else is set
+  - the wake word used
+  - the language detected in speech (functional plugins for this exist, work is ongoing)
+  - the language of a recognized user (not yet implemented)
+  - the language set by the client application, for example a HiveMind satellite
 
 ```javascript
 {
@@ -36,55 +38,66 @@ Refreshser on OVOS language support system
 
 ## How it works
 
-- (OPTIONAL) the `ovos-bidirectional-utterance-transformer` plugin will detect the text language, if it doesn't match the Session language it will "fix" that
-  - `"verify_lang": true` in config
-  - handle use case of a chat platform where users can write in any language (Session may have primary lang wrongly assigned)
-  - (OPTIONAL) ignore lang detections that are not in the list of native languages (consider false detection)
-    - `"ignore_invalid_langs": true` in config
-  - Session is now fixed to detected_lang
-- if Session language is not one of the native languages, translate it to the primary language
-  - OVOS can now understand the utterance
-  - (OPTIONAL) tell `ovos-bidirectional-dialog-transformer` to translate all dialogs to original Session language
-    - if not set OVOS will answer in it's primary language, even if you spoke to it in a different one
-    - `"bidirectional": true` in config
+The `ovos-utterance-translation-plugin` plugin can detect the language of an utterance. When `"verify_lang": true` is set, it compares the detected language against the session language. This handles cases such as a chat platform where a user can write in any language and the session language may be wrong.
+
+When `"ignore_invalid_langs": true` is set, the plugin ignores a detected language that is not one of the configured native languages, to guard against false detections. Otherwise, it fixes the session language to the detected one.
 
 Language tags are compared by tag distance, the same rule the rest of OVOS applies.
 A regional variant counts as one of the native languages, so `ar-SA` is native when
 the system supports `ar`, and `pt-BR` is native when the system supports `pt-PT`.
 A macrolanguage member such as `arz` is a different language and is translated.
 
-## Pre Requisites
+If the session language is not one of the native languages, the plugin translates the utterance to the primary language, so OVOS can understand it.
 
-This plugin assumes you have configured language detection and language translation plugin beforehand
+When `"bidirectional": true` is set, the `ovos-dialog-translation-plugin` plugin then translates OVOS dialogs back to the original session language. Otherwise OVOS answers in its primary language, even if the user spoke in a different one.
 
-if running in ovos-docker you need this plugin installed in ovos-core and ovos-audio, you also need the translation plugins
+## Prerequisites
 
-Recommend plugins:
-- https://github.com/OpenVoiceOS/ovos-translate-plugin-nllb (local)
-- https://github.com/OpenVoiceOS/ovos-translate-server-plugin  (remote, public server list)
+This plugin needs a language detection plugin and a language translation plugin configured beforehand.
 
-```
-"language": {
+In `ovos-docker`, install this plugin in both `ovos-core` and `ovos-audio`, together with the translation plugins.
+
+Recommended plugins:
+
+- [ovos-translate-plugin-nllb](https://github.com/OpenVoiceOS/ovos-translate-plugin-nllb) (local)
+- [ovos-translate-server-plugin](https://github.com/OpenVoiceOS/ovos-translate-server-plugin) (remote, public server list)
+
+```json
+{
+  "language": {
     "detection_module": "ovos-lang-detect-ngram-lm",
     "translation_module": "ovos-translate-plugin-nllb",
     "ovos-translate-plugin-nllb": {
-        "model": "nllb-200_600M_int8"
+      "model": "nllb-200_600M_int8"
     }
+  }
 }
 ```
 
 ## Configuration
 
-```
-"utterance_transformers": {
+```json
+{
+  "utterance_transformers": {
     "ovos-utterance-translation-plugin": {
       "bidirectional": true,
       "verify_lang": false,
-      "ignore_invalid": true,
+      "ignore_invalid_langs": true,
       "translate_secondary_langs": false
     }
-},
-"dialog_transformers": {
+  },
+  "dialog_transformers": {
     "ovos-dialog-translation-plugin": {}
+  }
 }
 ```
+
+## Related projects
+
+- [OpenVoiceOS/ovos-translate-plugin-nllb](https://github.com/OpenVoiceOS/ovos-translate-plugin-nllb) — local translation plugin
+- [OpenVoiceOS/ovos-translate-server-plugin](https://github.com/OpenVoiceOS/ovos-translate-server-plugin) — remote translation plugin, backed by a public server list
+- [OpenVoiceOS/ovos-google-translate-plugin](https://github.com/OpenVoiceOS/ovos-google-translate-plugin) — translation plugin backed by Google Translate
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).
