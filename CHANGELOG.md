@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a1) (2026-09-01)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a4...0.1.4a1)
+
+**Merged pull requests:**
+
+- fix: match language tags by distance [\#19](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/19) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.3a4](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a4) (2026-06-17)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a3...0.1.3a4)
