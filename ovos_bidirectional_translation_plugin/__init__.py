@@ -5,7 +5,15 @@ from ovos_config.config import Configuration
 from ovos_plugin_manager.language import OVOSLangDetectionFactory, OVOSLangTranslationFactory
 from ovos_plugin_manager.templates.transformers import UtteranceTransformer, DialogTransformer
 from ovos_plugin_manager.templates.language import LanguageDetector, LanguageTranslator
+from ovos_spec_tools import closest_lang, lang_matches
 from ovos_utils.log import LOG
+
+# a tag distance up to and including 10 is a usable match, the threshold the
+# rest of the OVOS stack applies to language tags (max_distance is inclusive,
+# per ovos_spec_tools and the ovos-plugin-manager dialect lookup). "pt-BR"
+# matches "pt-PT", and a macrolanguage member such as "arz" matches "ar" at
+# distance exactly 10, routing it to the macrolanguage's translation.
+MAX_LANG_DISTANCE = 10
 
 
 class UtteranceTranslator(UtteranceTransformer):
@@ -41,6 +49,22 @@ class UtteranceTranslator(UtteranceTransformer):
             return [self.internal_lang]
         return list(set([self.internal_lang] + Configuration().get("secondary_langs", [])))
 
+    def match_lang(self, lang: str) -> Optional[str]:
+        """
+        Return the supported language closest to the requested tag.
+
+        A regional variant resolves to the supported tag of the same language,
+        so "ar-SA" matches a system that supports "ar". Return None when no
+        supported language is close enough.
+
+        Args:
+            lang (str): The requested BCP-47 language tag.
+
+        Returns:
+            Optional[str]: The matching entry of valid_langs, or None.
+        """
+        return closest_lang(lang, self.valid_langs, max_distance=MAX_LANG_DISTANCE)
+
     def transform(self, utterances: List[str], context: Optional[Dict[str, Any]] = None) -> Tuple[
         List[str], Dict[str, Any]]:
         """
@@ -66,18 +90,21 @@ class UtteranceTranslator(UtteranceTransformer):
         if self.verify_lang:
             detected_lang = self.lang_detector.detect(utt)
             context["detected_lang"] = detected_lang
-            if sess.lang != detected_lang:
+            if not lang_matches(sess.lang, detected_lang, max_distance=MAX_LANG_DISTANCE):
                 LOG.warning(f"Specified lang: {sess.lang} but detected {detected_lang}")
-                if self.ignore_invalid and detected_lang not in self.valid_langs:
+                if self.ignore_invalid and self.match_lang(detected_lang) is None:
                     LOG.error(f"Ignoring lang detection, {detected_lang} not in valid languages: {self.valid_langs}")
                 else:
                     sess.lang = detected_lang
 
         # Check if the detected language is unsupported
-        if sess.lang not in self.valid_langs:
+        if self.match_lang(sess.lang) is None:
             # Translate the utterance to the internal language
             utt = self.translator.translate(utt, self.internal_lang, sess.lang)
             LOG.info(f"Translated utterance: {utt}")
+
+            # this only solves the issue for the first utterance in the list, but better than it not working at all
+            utterances = [utt] + utterances[1:] if len(utterances) > 1 else [utt]
             context["was_translated"] = True
 
             # signal DialogTransformer to translate everything back to the input language
@@ -167,7 +194,7 @@ class DialogTranslator(DialogTransformer):
 
         if context.get("translate_dialogs"):
             lang = context.get("output_lang") or Configuration().get("lang", "en-us")
-            if lang != sess.lang:
+            if not lang_matches(lang, sess.lang, max_distance=MAX_LANG_DISTANCE):
                 dialog = self.translator.translate(dialog, lang, sess.lang)
                 sess.lang = lang
                 context["was_translated"] = True

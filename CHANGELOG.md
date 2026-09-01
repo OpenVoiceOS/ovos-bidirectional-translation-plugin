@@ -1,16 +1,56 @@
 # Changelog
 
-## [0.1.1a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.1a1) (2024-11-09)
+## [0.1.4a2](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a2) (2026-09-01)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.0...0.1.1a1)
-
-**Fixed bugs:**
-
-- NameError: name 'utterances' is not defined [\#3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/issues/3)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.4a1...0.1.4a2)
 
 **Merged pull requests:**
 
-- chore: typing and docstrs [\#4](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+- docs: rewrite README in Simplified Technical English [\#18](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/18) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.4a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a1) (2026-09-01)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a4...0.1.4a1)
+
+**Merged pull requests:**
+
+- fix: match language tags by distance [\#19](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/19) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.3a4](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a4) (2026-06-17)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a3...0.1.3a4)
+
+**Merged pull requests:**
+
+- chore: add missing shared CI workflows [\#16](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/16) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.1.3a3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a3) (2025-12-19)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a2...0.1.3a3)
+
+**Merged pull requests:**
+
+- chore\(deps\): update dependency python to 3.14 [\#10](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/10) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.1.3a2](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a2) (2025-12-19)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.3a1...0.1.3a2)
+
+**Merged pull requests:**
+
+- chore\(deps\): update actions/setup-python action to v6 [\#13](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/13) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.1.3a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.3a1) (2025-12-18)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.2...0.1.3a1)
+
+**Fixed bugs:**
+
+- Solve Issue \#6 [\#7](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/7) ([GabrieleDellepere](https://github.com/GabrieleDellepere))
+
+**Merged pull requests:**
+
+- chore: Configure Renovate [\#8](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/8) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 

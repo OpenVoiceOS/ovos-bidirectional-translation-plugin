@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos-bidirectional-translation-plugin"
+dynamic = ["version"]
+description = "Bidirectional translation plugin to make OVOS understand any language"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "jarbasAi", email = "jarbasai@mailfence.com"}
+]
+keywords = ["OVOS", "plugin", "utterance", "transformer"]
+dependencies = [
+    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    "ovos-utils>=0.0.38,<1.0.0",
+    "ovos-bus-client>=0.0.8,<3.0.0",
+    "ovos-config>=0.0.12",
+    "ovos-spec-tools>=1.6.0a2,<2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/OpenVoiceOS/ovos_bidirectional_translation_plugin"
+
+[project.entry-points."opm.transformer.text"]
+ovos-utterance-translation-plugin = "ovos_bidirectional_translation_plugin:UtteranceTranslator"
+
+[project.entry-points."opm.transformer.dialog"]
+ovos-dialog-translation-plugin = "ovos_bidirectional_translation_plugin:DialogTranslator"
+
+[tool.setuptools.dynamic]
+version = {attr = "ovos_bidirectional_translation_plugin.version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ovos_bidirectional_translation_plugin*"]
