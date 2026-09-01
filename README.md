@@ -48,6 +48,11 @@ Refreshser on OVOS language support system
     - if not set OVOS will answer in it's primary language, even if you spoke to it in a different one
     - `"bidirectional": true` in config
 
+Language tags are compared by tag distance, the same rule the rest of OVOS applies.
+A regional variant counts as one of the native languages, so `ar-SA` is native when
+the system supports `ar`, and `pt-BR` is native when the system supports `pt-PT`.
+A macrolanguage member such as `arz` is a different language and is translated.
+
 ## Pre Requisites
 
 This plugin assumes you have configured language detection and language translation plugin beforehand
