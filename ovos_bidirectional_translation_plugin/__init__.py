@@ -43,32 +43,41 @@ class UtteranceTranslator(UtteranceTransformer):
         return Configuration().get("lang", "en-us")
 
     @property
-    def valid_langs(self) -> List[str]:
-        """Return the list of valid languages for translation."""
+    def passthrough_langs(self) -> List[str]:
+        """
+        Return the languages the assistant handles without translation.
+
+        The primary language is always one of them. The secondary languages join
+        it unless `translate_secondary_langs` is set, which asks for everything
+        outside the primary language to be translated.
+
+        Returns:
+            List[str]: The language tags that need no translation.
+        """
         if self.translate_secondary:
             return [self.internal_lang]
         return list(set([self.internal_lang] + Configuration().get("secondary_langs", [])))
 
     def match_lang(self, lang: str) -> Optional[str]:
         """
-        Return the supported language closest to the requested tag.
+        Return the passthrough language closest to the requested tag.
 
-        A regional variant resolves to the supported tag of the same language,
-        so "ar-SA" matches a system that supports "ar". Return None when no
-        supported language is close enough.
+        A regional variant resolves to the passthrough tag of the same language,
+        so "ar-SA" matches an assistant that handles "ar". Return None when the
+        utterance needs translation.
 
         Args:
             lang (str): The requested BCP-47 language tag.
 
         Returns:
-            Optional[str]: The matching entry of valid_langs, or None.
+            Optional[str]: The matching entry of passthrough_langs, or None.
         """
-        return closest_lang(lang, self.valid_langs, max_distance=MAX_LANG_DISTANCE)
+        return closest_lang(lang, self.passthrough_langs, max_distance=MAX_LANG_DISTANCE)
 
     def transform(self, utterances: List[str], context: Optional[Dict[str, Any]] = None) -> Tuple[
         List[str], Dict[str, Any]]:
         """
-        Transform the provided utterances by translating them to a valid language if needed.
+        Transform the provided utterances into a language the assistant handles.
 
         Args:
             utterances (List[str]): List of user-provided utterances.
@@ -93,11 +102,12 @@ class UtteranceTranslator(UtteranceTransformer):
             if not lang_matches(sess.lang, detected_lang, max_distance=MAX_LANG_DISTANCE):
                 LOG.warning(f"Specified lang: {sess.lang} but detected {detected_lang}")
                 if self.ignore_invalid and self.match_lang(detected_lang) is None:
-                    LOG.error(f"Ignoring lang detection, {detected_lang} not in valid languages: {self.valid_langs}")
+                    LOG.error(f"Ignoring lang detection, {detected_lang} needs translation, "
+                              f"handled languages: {self.passthrough_langs}")
                 else:
                     sess.lang = detected_lang
 
-        # Check if the detected language is unsupported
+        # Translate when the session language is not one the assistant handles
         if self.match_lang(sess.lang) is None:
             # Translate the utterance to the internal language
             utt = self.translator.translate(utt, self.internal_lang, sess.lang)

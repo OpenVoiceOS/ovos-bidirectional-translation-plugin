@@ -111,6 +111,37 @@ class TestUtteranceLanguageMatching(unittest.TestCase):
         self.assertFalse(context["was_translated"])
 
 
+class TestPassthroughLangs(unittest.TestCase):
+    """The set of languages the assistant handles without translation."""
+
+    def test_secondary_languages_are_passthrough_by_default(self):
+        transformer = make_utterance_translator(["en-US", "pt-PT"])
+        with patch.object(plugin, "Configuration", Mock(return_value=transformer._conf)):
+            self.assertEqual(sorted(transformer.passthrough_langs), ["en-US", "pt-PT"])
+
+    def test_translate_secondary_langs_leaves_only_the_primary_language(self):
+        transformer = make_utterance_translator(["en-US", "pt-PT"],
+                                                translate_secondary_langs=True)
+        with patch.object(plugin, "Configuration", Mock(return_value=transformer._conf)):
+            self.assertEqual(transformer.passthrough_langs, ["en-US"])
+
+    def test_secondary_language_is_translated_when_configured(self):
+        transformer = make_utterance_translator(["en-US", "pt-PT"],
+                                                translate_secondary_langs=True)
+        _, context = run_transform(transformer, "pt-PT")
+        self.assertTrue(context["was_translated"])
+
+    def test_secondary_language_is_not_translated_by_default(self):
+        transformer = make_utterance_translator(["en-US", "pt-PT"])
+        _, context = run_transform(transformer, "pt-PT")
+        self.assertFalse(context["was_translated"])
+
+    def test_the_language_set_is_named_for_what_it_holds(self):
+        transformer = make_utterance_translator(["en-US"])
+        self.assertTrue(hasattr(transformer, "passthrough_langs"))
+        self.assertFalse(hasattr(transformer, "valid_langs"))
+
+
 class TestDialogLanguageMatching(unittest.TestCase):
 
     def make_dialog_translator(self):
