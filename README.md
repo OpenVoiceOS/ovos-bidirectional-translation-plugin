@@ -49,6 +49,8 @@ A macrolanguage member such as `arz` is a different language and is translated.
 
 If the session language is not one of the native languages, the plugin translates the utterance to the primary language, so OVOS can understand it.
 
+The native languages are the primary language plus the secondary languages. Set `"translate_secondary_langs": true` to keep only the primary language native, so the plugin also translates the secondary languages before OVOS handles them.
+
 When `"bidirectional": true` is set, the `ovos-dialog-translation-plugin` plugin then translates OVOS dialogs back to the original session language. Otherwise OVOS answers in its primary language, even if the user spoke in a different one.
 
 ## Prerequisites
