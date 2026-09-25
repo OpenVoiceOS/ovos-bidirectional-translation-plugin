@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4a3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a3) (2026-09-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.4a2...0.1.4a3)
+
+**Merged pull requests:**
+
+- refactor: name the language set for what it holds [\#20](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/20) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.4a2](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a2) (2026-09-01)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.4a1...0.1.4a2)
