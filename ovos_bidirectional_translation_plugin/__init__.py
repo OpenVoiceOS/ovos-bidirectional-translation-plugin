@@ -44,7 +44,16 @@ class UtteranceTranslator(UtteranceTransformer):
 
     @property
     def valid_langs(self) -> List[str]:
-        """Return the list of valid languages for translation."""
+        """
+        Return the languages the assistant handles without translation.
+
+        The primary language is always one of them. The secondary languages join
+        it unless `translate_secondary_langs` is set, which asks for everything
+        outside the primary language to be translated.
+
+        Returns:
+            List[str]: The language tags that need no translation.
+        """
         if self.translate_secondary:
             return [self.internal_lang]
         return list(set([self.internal_lang] + Configuration().get("secondary_langs", [])))
