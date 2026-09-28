@@ -36,6 +36,9 @@ class UtteranceTranslator(UtteranceTransformer):
         self.verify_lang = self.config.get("verify_lang", False)
         self.ignore_invalid = self.config.get("ignore_invalid_langs", False)
         self.translate_secondary = self.config.get("translate_secondary_langs", False)
+        # Restrict the detector's answer to the configured languages. OFF by
+        # default, and deliberately so: see _detect_lang.
+        self.restrict_detection = self.config.get("restrict_detection_to_valid_langs", False)
 
     @property
     def internal_lang(self) -> str:
@@ -74,6 +77,61 @@ class UtteranceTranslator(UtteranceTransformer):
         """
         return closest_lang(lang, self.valid_langs, max_distance=MAX_LANG_DISTANCE)
 
+    def _detect_lang(self, utt: str) -> str:
+        """Detect the language of *utt*, optionally restricted to valid_langs.
+
+        The LanguageDetector template takes no candidate list, unlike the STT
+        template's ``detect_language(audio, valid_langs=...)``. A box that runs
+        two languages still gets an answer drawn from about 180, and the short
+        utterances this transformer sees are where that is least reliable.
+        ``detect_probs`` makes the restriction implementable here, with no
+        change to the template, which is ovos-plugin-manager's and core's to
+        merge.
+
+        It is OFF by default because it is not a free improvement: for this
+        plugin the detected language is also what decides whether to TRANSLATE.
+        A detector held to the configured languages can never report the
+        foreign language that bidirectional translation exists to handle, so
+        turning this on trades cross-language translation for stability within
+        a known set. That is the right trade for a multilingual box that does
+        not want translation, and the wrong one for a box that does.
+
+        Args:
+            utt (str): The utterance to classify.
+
+        Returns:
+            str: The detected language tag.
+        """
+        if not self.restrict_detection:
+            return self.lang_detector.detect(utt)
+        try:
+            probs = self.lang_detector.detect_probs(utt)
+        except NotImplementedError:
+            # A detector that declines the call by raising.
+            probs = None
+        if not probs:
+            # The common case is quieter than a raise: LanguageDetector
+            # declares detect_probs abstract with no body, and a subclass that
+            # overrides detect() only still instantiates, so the call RETURNS
+            # None instead of raising. An empty map says the same thing. Either
+            # way there are no scores to restrict, and the option cannot work.
+            LOG.warning(f"{self.lang_detector} returned no detection scores; "
+                        f"restrict_detection_to_valid_langs is inoperative")
+            return self.lang_detector.detect(utt)
+        candidates = {lang: score for lang, score in probs.items()
+                      if self.match_lang(lang) is not None}
+        if not candidates:
+            # Nothing the box supports was in the running. Report what the
+            # detector actually said rather than inventing a supported answer:
+            # the caller still has to decide, and a fabricated match would be
+            # indistinguishable from a real one.
+            LOG.debug(f"no valid language among detections {probs}")
+            return self.lang_detector.detect(utt)
+        best = max(candidates, key=candidates.get)
+        if max(probs, key=probs.get) != best:
+            LOG.debug(f"restricted detection to {best} from {probs}")
+        return best
+
     def transform(self, utterances: List[str], context: Optional[Dict[str, Any]] = None) -> Tuple[
         List[str], Dict[str, Any]]:
         """
@@ -96,13 +154,15 @@ class UtteranceTranslator(UtteranceTransformer):
         context["was_translated"] = False
 
         # Check for language mismatch (specified vs detected)
+        detected_lang = None
+        rejected = False
         if self.verify_lang:
-            detected_lang = self.lang_detector.detect(utt)
-            context["detected_lang"] = detected_lang
+            detected_lang = self._detect_lang(utt)
             if not lang_matches(sess.lang, detected_lang, max_distance=MAX_LANG_DISTANCE):
                 LOG.warning(f"Specified lang: {sess.lang} but detected {detected_lang}")
                 if self.ignore_invalid and self.match_lang(detected_lang) is None:
                     LOG.error(f"Ignoring lang detection, {detected_lang} not in valid languages: {self.valid_langs}")
+                    rejected = True
                 else:
                     sess.lang = detected_lang
 
@@ -122,6 +182,29 @@ class UtteranceTranslator(UtteranceTransformer):
                 context["translate_dialogs"] = True  # Consumed in DialogTransformer
 
             sess.lang = self.internal_lang
+
+        # Publish the detection only when it still describes the utterance
+        # core is about to see. Core ranks context["detected_lang"] ABOVE the
+        # session language in disambiguate_lang, so a stale value here does
+        # not merely sit unused: it outranks a session the lines above already
+        # corrected.
+        #
+        # Two ways a detection stops describing that utterance. The guard
+        # above REJECTS it, and the log says "Ignoring lang detection"; this
+        # used to still publish because core applies its own filter against
+        # get_valid_languages(), which hides the stale key whenever that set
+        # matches valid_langs. The two diverge under translate_secondary_langs,
+        # which narrows valid_langs to the internal language while core keeps
+        # the secondary languages, so the rejected detection reached core and
+        # won while the log claimed it was ignored.
+        #
+        # A detection core NEVER sees: once the block above translates, the
+        # text core receives is internal_lang, not detected_lang, and the
+        # session was just set to internal_lang to match. Publishing the
+        # pre-translation tag here would outrank that correction with a
+        # language the utterance is no longer written in.
+        if detected_lang is not None and not rejected and not context["was_translated"]:
+            context["detected_lang"] = detected_lang
 
         context["session"] = sess.serialize()  # Update session in context
 
