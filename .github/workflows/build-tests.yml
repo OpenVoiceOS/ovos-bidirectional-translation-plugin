@@ -11,3 +11,7 @@ jobs:
     secrets: inherit
     with:
       python_versions: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
+      # Without this the Run Tests step is skipped and the job reports green
+      # having run no test. test/test_lang_matching.py has been in the tree and
+      # unrun. There is no test/end2end here, so the whole directory is correct.
+      test_path: test
