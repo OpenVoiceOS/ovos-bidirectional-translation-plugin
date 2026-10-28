@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5a1](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.5a1) (2026-10-28)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.4a3...0.1.5a1)
+
+**Merged pull requests:**
+
+- fix\(ci\): wire test\_path so build-tests actually runs the suite [\#26](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/pull/26) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.1.4a3](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/tree/0.1.4a3) (2026-09-25)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-bidirectional-translation-plugin/compare/0.1.4a2...0.1.4a3)
