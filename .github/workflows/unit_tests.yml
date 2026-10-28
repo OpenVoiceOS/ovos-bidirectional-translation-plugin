@@ -1,0 +1,14 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches: [dev, master, main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: OpenVoiceOS/gh-automations/.github/workflows/coverage.yml@dev
+    secrets: inherit
+    with:
+      test_path: "test/"
+      coverage_source: "ovos_bidirectional_translation_plugin"
