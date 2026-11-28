@@ -51,6 +51,27 @@ If the session language is not one of the native languages, the plugin translate
 
 The native languages are the primary language plus the secondary languages. Set `"translate_secondary_langs": true` to keep only the primary language native, so the plugin also translates the secondary languages before OVOS handles them.
 
+A language detector answers from all the languages it knows, which is about 180 for a
+typical model. A box that runs two languages still gets an answer from all of them, and
+short utterances are where that is least reliable. Set
+`"restrict_detection_to_valid_langs": true` to keep only the native languages in the
+answer. The plugin reads the detector scores and takes the best native language.
+
+This option is off by default, and it is not a free improvement. The detected language
+also decides whether to translate. A detector held to the native languages cannot report
+the foreign language that translation exists to handle, so this option trades translation
+of other languages for a more stable answer inside a known set. Use it on a multilingual
+box that does not want translation. Do not use it on a box that does.
+
+This option needs a language detector that reports scores, which means one with a real
+`detect_probs`. Many detectors have only `detect`, and the plugin cannot restrict an
+answer it gets no scores for. In that case the plugin writes a warning that the option is
+inoperative and uses the plain detection, so the box keeps working and the log says why
+the setting does nothing.
+
+If no native language is in the answer, the plugin reports what the detector said, because
+a made-up native answer cannot be told apart from a real one.
+
 When `"bidirectional": true` is set, the `ovos-dialog-translation-plugin` plugin then translates OVOS dialogs back to the original session language. Otherwise OVOS answers in its primary language, even if the user spoke in a different one.
 
 ## Prerequisites
@@ -85,7 +106,8 @@ Recommended plugins:
       "bidirectional": true,
       "verify_lang": false,
       "ignore_invalid_langs": true,
-      "translate_secondary_langs": false
+      "translate_secondary_langs": false,
+      "restrict_detection_to_valid_langs": false
     }
   },
   "dialog_transformers": {
